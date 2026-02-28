@@ -29,50 +29,115 @@ If you find yourself writing "not pulled" or "not validated here" for ANY vendor
 
 **CRITICAL RULE: Research ALL candidates with EQUAL DEPTH before scoring. Do NOT research only the winner deeply and fill others with N/A.**
 
-For EACH candidate vendor, fetch these specific URLs (adapt org/repo names):
+For EACH candidate vendor, gather data across these dimensions. **Adapt your research strategy** — if one URL pattern doesn't work, try alternatives:
 
-**GitHub (real data, not claims):**
-- `https://api.github.com/repos/[org]/[sdk-repo]` → stars, forks, open_issues_count, pushed_at
-- `https://api.github.com/repos/[org]/[sdk-repo]/contributors?per_page=5` → bus factor, top contributors
-- `https://github.com/[org]/[sdk-repo]/releases` → last release date, release frequency
+---
 
-**Status & Reliability:**
-- `https://status.[vendor].com` or `https://[vendor].statuspage.io` → incident history
-- `https://www.cloudflarestatus.com/api/v2/components.json` (for Cloudflare, filter by vendor name)
-- Search: `[vendor] outage incident 2025 2026 site:twitter.com OR site:reddit.com`
+**1. TECHNICAL HEALTH (GitHub, SDKs, Documentation)**
 
-**Compliance & Security:**
-- `https://[vendor].com/security` or `https://[vendor].com/compliance` → certifications page
-- `https://docs.[vendor].com/security` → security documentation
-- Search: `[vendor] PCI DSS SOC2 ISO 27001 certification 2025`
-- Search: `[vendor] RBI payment aggregator license` (for India payment gateways)
+What you need: Repository activity, maintainer health, SDK quality, community engagement
 
-**Pricing (use India/region-specific URLs):**
-- `https://[vendor].com/pricing` (check for geo-redirect — try `/in/pricing` or `/pricing-india`)
-- Search: `[vendor] pricing MDR India 2025 2026 per transaction`
-- **DO THE MATH**: Calculate actual monthly cost at user's stated volume, then at 3x and 10x
+How to find it:
+- Try GitHub API: `https://api.github.com/repos/[org]/[repo-name]` → stars, forks, open issues, last push
+- Try contributors API: `https://api.github.com/repos/[org]/[repo-name]/contributors` → bus factor
+- If no GitHub, search: `[vendor] SDK github npm pypi repository`
+- Check docs site: `https://docs.[vendor].com` or `https://[vendor].com/docs`
+- If blocked, search: `[vendor] API documentation quality review`
 
-**Reviews & Sentiment:**
-- Search: `[vendor] G2 reviews rating 2025`
+---
+
+**2. RELIABILITY & UPTIME (Status Pages, Incident History)**
+
+What you need: Recent incidents, planned maintenance, uptime %, SLA claims
+
+How to find it:
+- Try common status page patterns: `status.[vendor].com`, `[vendor].statuspage.io`, `[vendor].com/status`
+- Try status page APIs: `[status-url]/api/v2/summary.json`, `[status-url]/api/v2/incidents.json`
+- If no status page, search: `[vendor] outage incident 2025 2026 site:twitter.com`
+- Check vendor blog: `[vendor].com/blog` for "incident" or "postmortem"
+- Search: `[vendor] downtime reliability uptime 2025`
+
+---
+
+**3. COMPLIANCE & SECURITY (Certifications, Audit Reports)**
+
+What you need: PCI DSS, SOC2, ISO 27001, HIPAA BAA, GDPR, region-specific (RBI in India, etc.)
+
+How to find it:
+- Try security pages: `[vendor].com/security`, `[vendor].com/compliance`, `[vendor].com/trust`
+- Try docs: `docs.[vendor].com/security`, `docs.[vendor].com/compliance`
+- Search: `[vendor] PCI DSS SOC2 ISO 27001 certification 2025 2026`
+- For India payments: `[vendor] RBI payment aggregator license`
+- For healthcare: `[vendor] HIPAA BAA business associate agreement`
+- If blocked, search: `[vendor] compliance certifications audit reports`
+
+---
+
+**4. PRICING & COST STRUCTURE (Avoid Traps)**
+
+What you need: Base pricing, volume tiers, regional pricing, hidden fees, scale cliffs
+
+How to find it:
+- Try pricing pages: `[vendor].com/pricing`, `[vendor].com/pricing-[region]` (e.g., `/in/pricing`, `/pricing-india`)
+- Try docs: `docs.[vendor].com/pricing`
+- Search: `[vendor] pricing [region] [metric] 2025 2026` (e.g., "razorpay pricing india MDR 2025")
+- **DO THE MATH**: Calculate cost at user's volume, 3×, and 10× to find non-linear jumps
+- Look for: setup fees, monthly minimums, request fees, bandwidth fees, support tiers
+
+---
+
+**5. USER SENTIMENT & REVIEWS (Real Experiences)**
+
+What you need: Recent reviews, common complaints, satisfaction scores
+
+How to find it:
+- Search: `[vendor] G2 reviews 2025`
+- Search: `[vendor] capterra reviews 2025`
 - Search: `[vendor] review site:reddit.com`
+- Search: `"[vendor]" review problems issues site:news.ycombinator.com`
+- Look for patterns: setup complexity, support quality, surprise fees, migration difficulty
 
-**Corporate Risk:**
-- Search: `[vendor] acquisition merger funding 2025 2026`
+---
+
+**6. CORPORATE STABILITY & RISK (Acquisitions, Layoffs, Strategy)**
+
+What you need: Recent funding, acquisitions, ownership changes, layoffs, product shutdowns
+
+How to find it:
+- Search: `[vendor] acquisition merger 2025 2026`
+- Search: `[vendor] funding series round 2025 2026`
 - Search: `[vendor] layoffs restructuring 2025 2026`
+- Check: `[vendor].com/about`, `[vendor].com/newsroom`, `[vendor].com/blog`
+- Look for: new CEO, pivot announcements, sunset notices
 
-**Tech Risk:**
-- Search: `[vendor] API deprecation sunset changelog breaking changes`
-- Check GitHub issues for `deprecated` or `breaking` labels
+---
+
+**7. TECHNOLOGY RISK (Deprecation, Breaking Changes, Lock-in)**
+
+What you need: API versioning policy, deprecation notices, migration paths, data portability
+
+How to find it:
+- Search: `[vendor] API deprecation sunset changelog`
+- Check docs: `docs.[vendor].com/changelog`, `[vendor].com/changelog`
+- Search GitHub issues: `repo:[org]/[repo] label:deprecated OR label:breaking`
+- Check: migration guides, export APIs, data portability
+- Look for: proprietary formats, vendor-specific features that create lock-in
+
+---
 
 **RESEARCH CHECKLIST (verify for EACH vendor before moving to scoring):**
-- [ ] Checked at least 2 compliance/security URLs (docs site + marketing page)
-- [ ] Checked status page or incident history (try main site, StatusPage.io, Twitter)
-- [ ] Checked pricing page (main + region-specific if applicable)
-- [ ] Checked GitHub repo data (API endpoint, not just homepage)
+- [ ] Attempted 2+ different URL patterns or search strategies per dimension
+- [ ] If primary data source failed (403, 404, no results), tried alternative approach
+- [ ] Documented what you tried when data unavailable
+- [ ] Compared apples-to-apples across all vendors (same metrics, same time period)
 
-If after trying 2+ sources you STILL can't find data, then mark N/A with explanation: "Unable to verify after checking [source 1], [source 2] — recommend manual verification"
+**ACCEPTABLE N/A format:**
+`7/10 — Unable to verify after checking [vendor].com/security (404), docs.[vendor].com/compliance (no cert page), searching "[vendor] PCI DSS 2025" (no results) — recommend manual verification`
 
-**NEVER write "not pulled" — if you didn't pull it, GO FETCH IT NOW.**
+**UNACCEPTABLE N/A format:**
+`N/A (7/10) — not pulled here` ← LAZY, GO RESEARCH IT
+
+If you write "not pulled", "not validated", or "not checked" for ANY vendor on ANY criterion, STOP and go fetch the data using alternative strategies above.
 
 ### Step 2: Follow the 4-phase process defined in SOUL.md exactly
 
