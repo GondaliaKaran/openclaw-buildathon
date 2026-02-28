@@ -1,199 +1,125 @@
 # Adaptive Vendor Evaluation Agent
 
-An intelligent agent-based system for evaluating and comparing vendors with dynamic criteria re-weighting based on discovered information.
+**OpenClaw Buildathon — Challenge #104**
 
-## Overview
+Research like a team of 5 analysts, decide like a CTO — adaptive tech evaluation with dynamic criteria weighting.
 
-This system goes beyond static comparison matrices by adaptively adjusting evaluation criteria based on discoveries during research. For example:
-- Finding a major outage increases weight on uptime history
-- Missing SDK support triggers deeper integration effort analysis
-- Hidden risks (maintainer departures, pricing patterns) influence recommendations
+## What This Does
 
-## Architecture
+An AI agent that evaluates vendors/tools/platforms with **adaptive criteria weighting**. Unlike static comparison matrices, this agent changes its evaluation criteria based on what it discovers during research.
 
-### Three-Layer Design
+**Example**: Discovering a vendor had 3 outages last month automatically increases the "Uptime/Reliability" weight and triggers deeper investigation of all vendors' status pages.
 
-1. **Interface Layer** - SOUL.md powered senior tech evaluator/CTO advisor
-2. **Logic Layer** - Four specialized components:
-   - Candidate Identifier: Discovers vendor candidates
-   - Multi-Criteria Researcher: Deep vendor analysis
-   - Dynamic Weight Adjuster: Adaptive criteria weighting
-   - Recommendation Synthesizer: Final recommendation with reasoning
-3. **Integration Layer** - ClawHub web-search for vendor discovery
+## Architecture (Three-Layer Breakdown)
 
-## Features
+### Interface Layer (SOUL.md)
+- Senior tech evaluator/CTO advisor persona
+- Produces structured comparison with full reasoning chain
+- 8-section mandatory output format ensuring every evaluation is thorough
 
-- ✅ Autonomous candidate identification
-- ✅ Dynamic criteria re-weighting (adaptive evaluation)
-- ✅ Deep research (GitHub sentiment, status pages, community health)
-- ✅ Context-aware (tech stack, domain, compliance)
-- ✅ Hidden risk detection (maintainer churn, pricing patterns)
-- ✅ Structured comparison with reasoning chain
-- ✅ Telegram bot interface
+### Logic Layer (Python Orchestrator)
+- **Candidate Identifier** (30 min) — Finds 3-5 relevant vendors based on context
+- **Multi-Criteria Researcher** (1 hr) — Deep investigation across technical, operational, business, and hidden risk dimensions
+- **Dynamic Weight Adjuster** (45 min) — Reshapes criteria weights based on research discoveries
+- **Recommendation Synthesizer** (30 min) — Produces final comparison with justified recommendation
+
+### Integration Layer (ClawHub + OpenAI)
+- ClawHub web search for vendor sites, GitHub, G2, status pages, compliance registries
+- OpenAI GPT-4o for analysis and synthesis
+
+## Key Deliverables
+
+### ✅ Accepts evaluation request and autonomously identifies candidates
+The agent extracts context (category, tech stack, domain, region, scale) from natural language queries and identifies 3-5 relevant candidates with rationale for each inclusion.
+
+### ✅ Dynamic criteria re-weighting (3+ instances per evaluation)
+Every evaluation shows explicit weight adjustment tables:
+
+| Criterion | Initial Weight | Final Weight | Reason for Change |
+|-----------|---------------|--------------|-------------------|
+| Payment Success Rate | 20% | 28% | Razorpay status page: 4 UPI incidents in 90 days |
+| Pricing/MDR | 10% | 18% | Stripe USD pricing = 3.4% effective vs Razorpay 2% |
+| Vendor Health | 5% | 12% | PayU parent Prosus restructured fintech division |
+
+### ✅ Structured comparison with reasoning chain
+Full output includes: context summary → candidates → discoveries → weight table → comparison matrix → hidden risks → recommendation → reproducibility notes.
+
+### ✅ Same category, different context = different evaluation
+"Payment gateways for Indian startup" produces completely different weights, scores, and recommendations than "Payment gateways for US enterprise" — demonstrated with different starting weight templates, different vendor pools, and different discoveries.
+
+## ⭐ Bonus: Hidden Risk Detection
+
+The agent checks 6 categories of hidden risks that standard comparisons miss:
+
+1. **🔧 Maintainer/Team Health** — GitHub commit patterns, bus factor, contributor churn
+2. **💰 Pricing Traps** — Non-linear cost scaling, hidden fees at volume thresholds
+3. **🔒 Vendor Lock-in** — Proprietary formats, migration difficulty, data export limits
+4. **🏢 Acquisition Risk** — Recent M&A, parent company changes, roadmap uncertainty
+5. **📋 Compliance Drift** — Expired certifications, failed audits
+6. **🛠️ Technology Deprecation** — API sunsets, SDK abandonment
+
+## Files
+
+```
+SOUL.md                              # Agent persona + evaluation process + output format
+AGENTS.md                            # Skill trigger conditions + execution instructions
+orchestrator.py                      # Main coordination logic (4-phase pipeline)
+agents/
+  candidate_identifier.py            # Phase 1: Find 3-5 candidates
+  researcher.py                      # Phase 2: Multi-criteria deep research
+  advanced_risk_detector.py          # Phase 2b: 6-type hidden risk detection
+  weight_adjuster.py                 # Phase 3: Dynamic weight adjustment
+  synthesizer.py                     # Phase 4: Final recommendation
+integrations/
+  clawhub.py                         # ClawHub web search integration
+  openai_client.py                   # OpenAI API client
+utils/
+  query_parser.py                    # Natural language → structured context
+  logger.py                          # Logging
+config.py                            # Configuration (pydantic models)
+run_evaluation.py                    # CLI entry point
+skill.json                           # OpenClaw skill manifest
+skill_handler.py                     # OpenClaw skill handler
+```
+
+## How to Test
+
+Send to the Telegram bot:
+
+**Test 1 — India context:**
+```
+evaluate payment gateways for Indian startup with 10K transactions/month
+```
+
+**Test 2 — US context (same category, different output):**
+```
+evaluate payment gateways for US enterprise with 500K transactions/month
+```
+
+**Test 3 — Different category:**
+```
+evaluate authentication solutions for healthcare startup with 5000 users
+```
+
+Each response will include all 8 sections with different weights, different candidates, different discoveries, and different recommendations.
+
+## Evaluation Rubric Mapping
+
+| Rubric Criteria | Weight | How We Address It |
+|---|---|---|
+| Adaptive Evaluation | 30% | Explicit weight tables with before/after + evidence chains for each adjustment |
+| Research Depth | 25% | Web search for GitHub, status pages, G2, pricing, compliance; hidden risk detection |
+| Contextual Awareness | 20% | Different starting weights per context; region/stack/domain affect candidate pool |
+| Recommendation Quality | 15% | Primary + backup + conditional alternatives; honest trade-offs with evidence |
+| Reproducibility | 10% | Date-stamped; data sources listed; can re-run with updated data |
 
 ## Setup
 
-### Prerequisites
+1. OpenClaw on Hostinger VPS with GPT-4o
+2. Telegram bot gateway
+3. Place SOUL.md and AGENTS.md in OpenClaw workspace
+4. Place Python files in workspace/vendor-evaluation/
 
-- Python 3.10+
-- OpenAI API key
-- Telegram bot token
-- ClawHub access
+## Channel
 
-### Installation
-
-1. Clone the repository:
-```bash
-cd /path/to/openclaw-buildathon
-```
-
-2. Create virtual environment:
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On macOS/Linux
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Configure environment:
-```bash
-cp .env.example .env
-# Edit .env with your API keys
-```
-
-### Configuration
-
-Edit `.env` file with your credentials:
-
-```env
-OPENAI_API_KEY=sk-your-key-here
-TELEGRAM_BOT_TOKEN=your-bot-token-here
-CLAWHUB_API_URL=https://api.clawhub.com
-```
-
-## Usage
-
-### Running the Telegram Bot
-
-```bash
-python main.py
-```
-
-### Example Evaluation Request
-
-Send to your Telegram bot:
-```
-/evaluate
-
-Category: Payment Gateway
-Requirements:
-- Tech Stack: Golang, Python, AWS
-- Domain: Fintech (RBI compliance required)
-- Priority: Security, uptime, integration ease
-```
-
-### Expected Output
-
-The agent will:
-1. Identify 3-5 relevant candidates (Stripe, Razorpay, PayPal, etc.)
-2. Research each across multiple dimensions
-3. Dynamically adjust criteria weights based on findings
-4. Produce structured comparison with reasoning chain
-5. Recommend best fit with trade-off analysis
-
-## Deployment to Hostinger VPS
-
-### Setup on VPS
-
-```bash
-# SSH into your VPS
-ssh user@your-hostinger-vps
-
-# Clone repository
-git clone <your-repo-url>
-cd openclaw-buildathon
-
-# Setup
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Configure environment
-nano .env
-# Add your API keys
-
-# Run with systemd or screen
-screen -S vendor-agent
-python main.py
-```
-
-### Using systemd (recommended)
-
-Create `/etc/systemd/system/vendor-agent.service`:
-
-```ini
-[Unit]
-Description=Vendor Evaluation Agent
-After=network.target
-
-[Service]
-Type=simple
-User=your-user
-WorkingDirectory=/path/to/openclaw-buildathon
-Environment="PATH=/path/to/openclaw-buildathon/venv/bin"
-ExecStart=/path/to/openclaw-buildathon/venv/bin/python main.py
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Then:
-```bash
-sudo systemctl enable vendor-agent
-sudo systemctl start vendor-agent
-sudo systemctl status vendor-agent
-```
-
-## Evaluation Rubric
-
-- **30% Adaptive Evaluation**: Criteria weights change based on discoveries
-- **25% Research Depth**: Beyond surface-level information
-- **20% Contextual Awareness**: Tech stack, domain, compliance factors
-- **15% Recommendation Quality**: Clear reasoning, honest trade-offs
-- **10% Reproducibility**: Can re-run with fresh data
-
-## Project Structure
-
-```
-openclaw-buildathon/
-├── main.py                          # Entry point
-├── config.py                        # Configuration management
-├── SOUL.md                          # Agent personality definition
-├── requirements.txt                 # Dependencies
-├── .env                            # Environment configuration
-├── agents/
-│   ├── __init__.py
-│   ├── candidate_identifier.py     # Logic Layer: Candidate discovery
-│   ├── researcher.py               # Logic Layer: Multi-criteria research
-│   ├── weight_adjuster.py          # Logic Layer: Dynamic weighting
-│   └── synthesizer.py              # Logic Layer: Recommendation synthesis
-├── integrations/
-│   ├── __init__.py
-│   ├── clawhub.py                  # ClawHub web-search integration
-│   └── openai_client.py            # OpenAI API wrapper
-├── interfaces/
-│   ├── __init__.py
-│   └── telegram_bot.py             # Telegram bot interface
-└── utils/
-    ├── __init__.py
-    ├── logger.py                   # Logging utilities
-    └── prompts.py                  # Prompt templates
-```
-
-## License
-
-MIT
+Telegram

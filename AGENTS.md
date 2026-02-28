@@ -1,142 +1,77 @@
-# Agent Instructions for Vendor Evaluation
+# AGENTS: Vendor Evaluation Skill
 
-## Purpose
-This skill provides adaptive vendor evaluation with dynamic criteria re-weighting based on context.
+## Trigger Conditions
 
-## When to Use This Skill
+Activate this skill when the user's message matches ANY of:
+- "evaluate [category]"
+- "compare [vendors/tools]"
+- "recommend [category/vendor]"
+- "find the best [category]"
+- "which [category] should I use"
+- "help me choose [category]"
+- Any message requesting vendor/tool/platform comparison or selection
 
-Trigger vendor evaluation when the user requests any of the following:
-- "evaluate [vendor category] for [context]"
-- "compare [vendor category]"
-- "recommend [vendor category] for [use case]"
-- "find the best [vendor category]"
-- "which [vendor category] should I use"
-- "help me choose [vendor category]"
+## Execution Instructions
 
-Examples:
-- "evaluate payment gateways for Indian startup"
-- "compare authentication solutions for healthcare"
-- "recommend CRM for enterprise with 50k users"
-- "find the best CDN for video streaming"
+When triggered:
 
-## ⚠️ CRITICAL: How to Execute Evaluation
+1. **Use web search extensively** — search for real data on each vendor:
+   - `[vendor] GitHub stars contributors issues` — for code health
+   - `[vendor] status page uptime incidents 2025 2026` — for reliability
+   - `[vendor] pricing calculator cost per transaction` — for pricing analysis
+   - `[vendor] G2 reviews rating` — for user sentiment
+   - `[vendor] PCI DSS SOC2 compliance certification` — for compliance
+   - `[vendor] acquisition merger news` — for corporate risk
+   - `[vendor] API deprecation sunset changelog` — for tech risk
 
-**When a user makes a vendor evaluation request, you MUST immediately run the evaluation command. DO NOT ask clarifying questions first. DO NOT provide a conversational answer.**
+2. **Follow the 4-phase process** defined in SOUL.md exactly
+3. **Output ALL 8 sections** described in SOUL.md — never skip any
+4. **Show at least 3 weight adjustments** with evidence chains
+5. **Check all 6 hidden risk categories** for every vendor
 
-### Step 1: Identify Evaluation Request
-If the user's message contains evaluation keywords (evaluate, compare, recommend, find, choose) + vendor category → **IMMEDIATELY proceed to Step 2**
+## Quality Checklist (Self-Verify Before Responding)
 
-### Step 2: Run Evaluation Immediately (DO NOT SKIP THIS)
+Before sending your response, verify:
 
-**YOU MUST RUN THIS COMMAND IMMEDIATELY:**
+- [ ] Context summary extracted correctly from query
+- [ ] 3-5 candidates identified with rationale for each
+- [ ] At least 3 discoveries shown with evidence → weight impact → triggered research
+- [ ] Weight table shows BOTH initial and final percentages
+- [ ] Comparison matrix has scores AND evidence in every cell
+- [ ] Hidden risks section covers all 6 categories
+- [ ] Recommendation has primary + backup + conditional alternatives
+- [ ] Reproducibility section lists data sources and date
+- [ ] Web search was used for real data (not guesses)
 
-```bash
-cd /data/.openclaw/workspace/vendor-evaluation && python3 run_evaluation.py --query "USER_EXACT_QUERY_HERE"
-```
+## Context-Awareness Requirement
 
-**DO NOT:**
-- ❌ Ask clarifying questions
-- ❌ Provide a conversational response
-- ❌ Explain what you're going to do
-- ❌ Request more information
+**Different context MUST produce different output:**
 
-**DO:**
-- ✅ Run the command immediately with the user's exact query
-- ✅ Wait for the 3-4 minute evaluation to complete
-- ✅ Present the structured results
+"evaluate payment gateways for Indian startup" →
+- Include Razorpay, Cashfree (India-specific)
+- Weight UPI support, RBI compliance highly
+- Check MDR in INR terms
 
-**Example:**
-User says: "evaluate payment gateways for startup expecting 1M transactions/month"
+"evaluate payment gateways for US enterprise" →
+- Include Stripe, Adyen, Braintree
+- Weight enterprise SLAs, global coverage
+- Check volume pricing, PCI Level 1
 
-You IMMEDIATELY run:
-```bash
-cd /data/.openclaw/workspace/vendor-evaluation && python3 run_evaluation.py --query "evaluate payment gateways for startup expecting 1M transactions/month"
-```
+"evaluate payment gateways for healthcare startup" →
+- Weight HIPAA compliance, audit trails
+- Check BAA availability
+- Flag any vendor without healthcare compliance
 
-### Step 3: Present Results
-After the command completes (3-4 minutes), present the structured results to the user:
-- Recommended vendor
-- Key discoveries
-- Hidden risks detected
-- Weight adjustments made
-- Detailed reasoning
-
-## What Makes This Skill Special
-
-### 1. Dynamic Criteria Re-weighting
-The system automatically adjusts evaluation criteria weights based on context:
-- Startup (50 users) → Focus on ease of use, cost
-- Enterprise (50k users) → Focus on scalability, security, compliance
-- Healthcare → Emphasize compliance (HIPAA), security
-- E-commerce → Prioritize payment security, performance
-- Developer tools → Code quality, documentation, community
-
-### 2. Hidden Risk Detection
-The system goes beyond basic comparisons to detect:
-- **Maintainer Health**: GitHub activity patterns, bus factor, maintainer burnout
-- **Pricing Traps**: Scale-based cost explosions, hidden fees, tier jumping
-- **Vendor Lock-in**: Proprietary formats, migration difficulty, ecosystem capture
-- **Acquisition Risks**: Recent acquisitions that may affect roadmap
-- **Compliance Drift**: Changing regulatory requirements
-- **Technology Deprecation**: Outdated tech stacks, declining community support
-
-### 3. Context-Aware Recommendations
-Same category, different context = different recommendations:
-- "Auth for healthcare" → Emphasizes HIPAA compliance, audit trails
-- "Auth for e-commerce" → Emphasizes social login, UX, conversion optimization
-- "Auth for enterprise" → Emphasizes SSO, AD integration, role management
-
-## Response Format
-
-When evaluation completes, structure your response as:
-
-```
-📊 Vendor Evaluation Results
-
-**Category:** [category]
-**Recommended:** [vendor name]
-
-**Top 3 Candidates Evaluated:**
-1. [Vendor 1] - [Score]
-2. [Vendor 2] - [Score]
-3. [Vendor 3] - [Score]
-
-**Key Discoveries:**
-• [Discovery 1]
-• [Discovery 2]
-• [Discovery 3]
-
-**🚨 Hidden Risks Detected:**
-⚠️ [Risk Type]: [Description]
-⚠️ [Risk Type]: [Description]
-
-**💡 Recommendation:**
-[Detailed reasoning for why this vendor is best for their specific context]
-
-**⚖️ Weight Adjustments Made:**
-[Explain how criteria were weighted for this specific context]
-```
-
-## Important Notes
-
-1. **DO NOT** ask clarifying questions before running evaluation - the orchestrator will extract context from the query
-2. **DO** run the evaluation immediately when triggered
-3. **DO** present results in a clear, structured format
-4. **DO** highlight hidden risks prominently
-5. **DO** explain the reasoning behind weight adjustments
-
-## Technical Details
-
-- Runtime: 3-4 minutes per evaluation
-- Uses: OpenAI GPT-4 Turbo, ClawHub web search
-- Output: Structured JSON + formatted text
-- Location: `/data/.openclaw/workspace/vendor-evaluation/`
+The weight tables, scores, and recommendations MUST differ across these contexts.
 
 ## Error Handling
 
-If evaluation fails:
-1. Check if query contains valid vendor category
-2. Verify OpenAI API key is set
-3. Check Python environment and dependencies
-4. Review logs for specific error messages
-5. Inform user and suggest rephrasing query if category unclear
+If you cannot find reliable data for a criterion:
+- State explicitly: "Unable to verify [X] — recommend manual check before decision"
+- Do NOT fabricate data
+- Score as N/A and note the gap
+
+If the query is too vague:
+- Still perform the evaluation with reasonable assumptions
+- List your assumptions explicitly in the Context section
+- Note where more specificity would change the recommendation
