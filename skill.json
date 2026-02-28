@@ -1,0 +1,81 @@
+{
+  "name": "vendor_evaluation",
+  "version": "1.0.0",
+  "description": "Adaptive vendor evaluation agent with dynamic criteria re-weighting",
+  "author": "openclaw-buildathon",
+  "type": "agent",
+  "category": "business",
+  "tags": ["vendor", "evaluation", "comparison", "research", "adaptive"],
+  
+  "triggers": {
+    "keywords": ["evaluate", "compare vendors", "find vendor", "recommend", "assessment"],
+    "patterns": [
+      "evaluate .+ (vendor|tool|platform|service|solution)",
+      "compare .+ (vendors|tools|platforms)",
+      "find best .+ for",
+      "recommend .+ for .+ (startup|company|project)",
+      "assess .+ options"
+    ]
+  },
+  
+  "capabilities": [
+    "candidate_identification",
+    "multi_criteria_research",
+    "dynamic_weighting",
+    "evidence_based_recommendation",
+    "hidden_risk_detection",
+    "context_aware_analysis"
+  ],
+  
+  "configuration": {
+    "max_candidates": 5,
+    "research_depth": "comprehensive",
+    "enable_dynamic_weighting": true,
+    "enable_hidden_risk_detection": true,
+    "evaluation_timeout": 300
+  },
+  
+  "resources": {
+    "soul_file": "SOUL.md",
+    "prompts_dir": "utils/prompts.py"
+  },
+  
+  "dependencies": {
+    "python": ">=3.10",
+    "openai": ">=1.12.0",
+    "pydantic": ">=2.5.0",
+    "aiohttp": ">=3.9.0"
+  },
+  
+  "api": {
+    "entry_point": "main.py",
+    "handler": "handle_message",
+    "initialization": "initialize"
+  },
+  
+  "usage_examples": [
+    {
+      "input": "evaluate payment gateways for Indian fintech startup",
+      "description": "Full evaluation with context extraction"
+    },
+    {
+      "input": "compare Stripe vs Razorpay for e-commerce in India",
+      "description": "Direct comparison of specific vendors"
+    },
+    {
+      "input": "find best observability tool for Python microservices on AWS",
+      "description": "Tech-stack specific evaluation"
+    }
+  ],
+  
+  "conversation_flow": {
+    "greeting": "I'm an adaptive vendor evaluation agent. I can help you find and compare vendors with intelligent, context-aware analysis.",
+    "clarification_prompts": [
+      "What category are you evaluating? (e.g., payment gateway, CRM, database)",
+      "What's your tech stack?",
+      "What's your domain/industry?",
+      "What are your top priorities?"
+    ],
+    "completion_message": "Evaluation complete! I've provided a detailed recommendation with reasoning."
+  }
+}

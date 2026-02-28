@@ -1,0 +1,52 @@
+Required deliverables Accepts evaluation request (category + requirements) and autonomously identifies candidates Demonstrates dynamic criteria re-weighting — at least 2 instances where a discovery changes subsequent evaluation Produces structured comparison with justified recommendation, showing what discoveries influenced final weights Same category with different context produces different evaluation approaches Why this requires agent reasoning A comparison matrix applies fixed criteria. Real evaluation is adaptive. Discovering a vendor's major outage should weight-up uptime history and trigger SLA investigation. Finding no Golang SDK isn't just a data point — it should reassess integration effort and potentially change the recommendation entirely. Three-layer breakdown Interface layer 25 min SOUL.md: senior tech evaluator/CTO advisor. Output: structured comparison with reasoning chain. Logic layer 3 hrs Candidate identifier (30 min). Multi-criteria researcher (1 hr). Dynamic weight adjuster (45 min). Recommendation synthesizer (30 min). Integration layer 15 min ClawHub web-search for vendor sites, GitHub, G2, status pages, compliance registries. Total: ~3.5 to 4 hrs Evaluation rubric 30% Adaptive Evaluation Criteria weights genuinely change based on discoveries, not just static scoring 25% Research Depth Goes beyond surface — GitHub issue sentiment, status page history, community health 20% Contextual Awareness Factors in stack (Golang, Python, AWS) and domain (fintech, RBI compliance) 15% Recommendation Quality Well-justified with clear reasoning chain, honest about trade-offs 10% Reproducibility Can re-run with updated data for a refreshed recommendation Data boundary Public data — vendor websites, pricing pages, docs, GitHub repos, Stack Overflow, status pages, PCI-DSS/RBI-approved lists, G2, Capterra. ⭐ Bonus challenge Agent identifies a 'hidden risk' not in standard comparison — e.g., a vendor's key maintainer leaving (from GitHub commit patterns), or pricing that explodes at scale. Channel Telegram or Slack Setup you will need Bot token. ClawHub web-search. If you are behind, cut to Drop dynamic re-weighting. Fixed criteria, 3 vendors, static comparison. ~2 hrs.
+
+I have hostinger VPS, openai key. i need to use openclaw and soul.md and so on.
+
+You are an expert and start creating all the files and projects that is required for this usage. 
+
+
+
+building your agent
+04
+Building your agent
+The workspace
+text
+copy
+~/.openclaw/workspace/
+├── SOUL.md            # personality, tone, constraints
+├── AGENTS.md          # operating instructions, rules
+├── skills/
+│   └── <skill-name>/
+│       └── SKILL.md
+SOUL.md
+Personality. Blank = generic. Specific = specific. 50 to 150 lines.
+
+Bad: "You are a helpful AI assistant." Good: "You are Kharcha, an expense tracker on WhatsApp. One response per entry. Format: ✓ [amount] · [category] · [date]."
+
+Skills
+bash
+copy
+clawhub install web-search && docker restart openclaw
+
+mkdir -p ~/.openclaw/workspace/skills/<n>
+nano ~/.openclaw/workspace/skills/<n>/SKILL.md
+The 3-of-5 rule
+5 messages in WebChat. 3 correct = go live. 2 or fewer = fix first.
+
+Commands
+bash
+copy
+ssh root@<your-vps-ip>
+docker ps | grep openclaw
+docker logs openclaw --tail 50
+docker restart openclaw
+nano ~/.openclaw/workspace/SOUL.md
+What to edit when
+Symptom	Check	Fix
+Wrong tone	SOUL.md → Style	More specific
+Off-topic	SOUL.md → Boundaries	'Do not respond to X'
+Bad format	SOUL.md → Output	Exact template
+Skill silent	SKILL.md	Match triggers
+Hallucinates	SOUL.md → Values	'Never invent data' #1
+Loops	SOUL.md	'Once per message, then stop'
+← Setup guide
