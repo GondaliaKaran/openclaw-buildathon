@@ -48,33 +48,48 @@ async def run_evaluation(query: str):
         print("✅ EVALUATION COMPLETE")
         print("="*80 + "\n")
         
-        print(f"📊 Category: {result.get('category', 'N/A')}")
-        print(f"🎯 Recommended: {result.get('recommended_vendor', 'N/A')}\n")
+        print(f"📊 Context: {result.context_summary}")
+        print(f"🎯 Recommended: {result.recommended_vendor}\n")
         
         print("📋 Candidates Evaluated:")
-        for candidate in result.get('candidates', []):
-            print(f"   • {candidate.get('name', 'Unknown')}")
+        for candidate in (result.candidates or []):
+            if isinstance(candidate, str):
+                print(f"   • {candidate}")
+            else:
+                print(f"   • {candidate.get('name', str(candidate))}")
         
         print("\n🔍 Key Discoveries:")
-        for i, discovery in enumerate(result.get('key_discoveries', [])[:5], 1):
-            print(f"   {i}. {discovery}")
+        for i, discovery in enumerate((result.key_discoveries or [])[:5], 1):
+            if isinstance(discovery, dict):
+                print(f"   {i}. {discovery.get('finding', str(discovery))}")
+            else:
+                print(f"   {i}. {discovery}")
         
         print("\n🚨 Hidden Risks:")
-        hidden_risks = result.get('hidden_risks', [])
+        hidden_risks = result.hidden_risks or []
         if hidden_risks:
             for risk in hidden_risks:
-                print(f"   ⚠️  {risk.get('type', 'Unknown')}: {risk.get('description', 'No description')}")
+                if isinstance(risk, dict):
+                    print(f"   ⚠️  {risk.get('type', 'Unknown')}: {risk.get('description', 'No description')}")
+                else:
+                    print(f"   ⚠️  {risk}")
         else:
             print("   ✅ No significant hidden risks detected")
         
-        print("\n💡 Recommendation:")
-        print(f"   {result.get('recommendation_summary', 'See detailed analysis above')}\n")
+        print(f"\n💡 Recommendation:")
+        print(f"   {result.rationale}\n")
         
-        print("="*80)
+        if result.trade_offs:
+            print("⚖️ Trade-offs:")
+            for trade in result.trade_offs:
+                print(f"   • {trade}")
         
-        # Also output JSON for programmatic use
-        print("\n📄 JSON Output:")
-        print(json.dumps(result, indent=2))
+        if result.next_steps:
+            print("\n📋 Next Steps:")
+            for step in result.next_steps:
+                print(f"   • {step}")
+        
+        print("\n" + "="*80)
         
         return result
         

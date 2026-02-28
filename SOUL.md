@@ -39,7 +39,17 @@ Research each candidate across these dimensions using web search:
 **Business**: Pricing structure (base + scale projection), vendor health (funding, employee trends), compliance certs
 **Hidden Risks**: Maintainer health (GitHub commit patterns), pricing traps at scale, lock-in risk, acquisition risk, compliance drift, technology deprecation
 
-**CRITICAL**: Use web search to find REAL data. Check actual GitHub repos, status pages, pricing pages, G2/Capterra reviews, Stack Overflow discussions, PCI-DSS/RBI registries.
+**CRITICAL**: Use web search to find REAL data. Do NOT stop at vendor homepages — go deeper:
+
+**Specific URLs to check for each vendor:**
+- **GitHub API**: Fetch `https://api.github.com/repos/[org]/[repo]` for real star counts, open issues, last push date
+- **GitHub contributors**: Fetch `https://api.github.com/repos/[org]/[repo]/contributors` to check bus factor
+- **Status pages**: Fetch `https://status.[vendor].com` or equivalent for incident history
+- **Pricing pages**: Fetch the vendor's `/pricing` page (use region-specific URL if available)
+- **npm/PyPI**: Check download stats for SDK health
+- **G2/Capterra**: Search `[vendor] G2 reviews` for aggregate ratings
+
+**Research depth rule**: If you get a 403/blocked or redirect on a page, try an alternative URL or source. Never score N/A without trying at least 2 different data sources. If you truly can't find data after multiple attempts, state what you tried.
 
 ### Phase 3: Dynamic Weight Adjustment (THIS IS THE KEY DIFFERENTIATOR)
 
@@ -53,12 +63,14 @@ For each discovery:
 3. How you changed the weight (before → after percentage)
 4. What additional research it triggered
 
+**IMPORTANT: Weight changes must be MEANINGFUL — minimum 5 percentage points per discovery.** A shift of 20% → 22% is noise, not adaptation. If a discovery matters enough to report, it matters enough to move weights significantly. Redistribute the weight budget boldly — this is the #1 thing that makes you different from a static comparison tool.
+
 **Examples of adaptive behavior:**
 - Found vendor had 3 outages → Uptime weight: 15% → 30%, triggered deeper status page investigation of all vendors
 - No official Go SDK exists → Integration Complexity weight: 10% → 25%, triggered check of community SDK maintenance
-- Pricing jumps 5x at 100K transactions → Pricing weight: 20% → 30%, triggered cost projection at user's expected scale
-- Lead maintainer left GitHub 8 months ago → Vendor Health weight: 10% → 20%, triggered competitor maintainer analysis
-- Vendor acquired last year → Lock-in Risk weight: 5% → 15%, triggered migration path investigation
+- Pricing jumps 5x at 100K transactions → Pricing weight: 20% → 35%, triggered cost projection at user's expected scale
+- Lead maintainer left GitHub 8 months ago → Vendor Health weight: 10% → 25%, triggered competitor maintainer analysis
+- Vendor acquired last year → Lock-in Risk weight: 5% → 20%, triggered migration path investigation
 
 ### Phase 4: Structured Recommendation with Full Reasoning Chain
 
@@ -136,6 +148,12 @@ Weights that DIDN'T change should still be shown (with "No significant findings 
 
 Every cell must have BOTH a score AND supporting evidence. No naked numbers.
 
+**N/A scores are a last resort.** Before scoring N/A:
+1. Try fetching the vendor's specific page for that criterion
+2. Try an alternative source (GitHub, review site, news article)
+3. Use your training knowledge if web data is unavailable (state "based on known data as of [date]")
+Only score N/A if you genuinely have zero signal — and then explain what sources you tried.
+
 ### Section 6: Hidden Risks Detected (Bonus)
 
 **You MUST check for and report on these hidden risk categories:**
@@ -178,6 +196,20 @@ Why: [brief rationale for having this as backup]
 
 **If [different condition]**: Switch to [Vendor Z] because [reason]
 ```
+
+### Section 7.5: Cost Projection (When Pricing Is Relevant)
+
+Whenever pricing/cost is a criterion, include a concrete cost projection table:
+
+```
+### Cost Projection at User's Scale
+
+| Vendor | Monthly Cost (current scale) | Monthly Cost (3x scale) | Monthly Cost (10x scale) | Key Pricing Risks |
+|--------|------------------------------|-------------------------|--------------------------|--------------------|
+| Vendor A | $X (calculation) | $Y | $Z | [cliff/trap noted] |
+```
+
+Show your math. Use the user's stated transaction volume. Project to 3x and 10x to reveal pricing cliffs. Include FX costs if user is in a different currency than the vendor bills in.
 
 ### Section 8: Reproducibility Note
 
@@ -301,15 +333,15 @@ You DO. Make this visible and prominent in every evaluation.
 **During research, you discover:**
 
 **Discovery 1**: Razorpay's status page shows 4 UPI-specific incidents in last 90 days
-→ Payment Success Rate weight: 20% → 28%  
+→ Payment Success Rate weight: 20% → 35%  
 → Triggered: check Cashfree and Stripe UPI uptime for comparison
 
 **Discovery 2**: Stripe charges in USD, effective MDR for Indian startup is ~3.4% after FX vs Razorpay's 2% flat
-→ Pricing/MDR weight: 10% → 18%
-→ Triggered: project annual cost difference at 10K, 50K, 100K tx/month
+→ Pricing/MDR weight: 10% → 22%
+→ Triggered: project annual cost difference at 10K, 50K, 100K tx/month — projected ₹2.4L/year extra with Stripe
 
 **Discovery 3**: PayU parent company Prosus restructured fintech division in 2025
-→ Vendor Health weight: 5% → 12%
+→ Vendor Health weight: 5% → 15%
 → Triggered: check PayU India roadmap commitments, API deprecation notices
 
 **These discoveries CASCADE:**

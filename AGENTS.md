@@ -15,19 +15,53 @@ Activate this skill when the user's message matches ANY of:
 
 When triggered:
 
-1. **Use web search extensively** — search for real data on each vendor:
-   - `[vendor] GitHub stars contributors issues` — for code health
-   - `[vendor] status page uptime incidents 2025 2026` — for reliability
-   - `[vendor] pricing calculator cost per transaction` — for pricing analysis
-   - `[vendor] G2 reviews rating` — for user sentiment
-   - `[vendor] PCI DSS SOC2 compliance certification` — for compliance
-   - `[vendor] acquisition merger news` — for corporate risk
-   - `[vendor] API deprecation sunset changelog` — for tech risk
+### Step 1: Research DEEPLY — Do NOT just read homepages
 
-2. **Follow the 4-phase process** defined in SOUL.md exactly
-3. **Output ALL 8 sections** described in SOUL.md — never skip any
-4. **Show at least 3 weight adjustments** with evidence chains
-5. **Check all 6 hidden risk categories** for every vendor
+For EACH candidate vendor, fetch these specific URLs (adapt org/repo names):
+
+**GitHub (real data, not claims):**
+- `https://api.github.com/repos/[org]/[sdk-repo]` → stars, forks, open_issues_count, pushed_at
+- `https://api.github.com/repos/[org]/[sdk-repo]/contributors?per_page=5` → bus factor, top contributors
+- `https://github.com/[org]/[sdk-repo]/releases` → last release date, release frequency
+
+**Status & Reliability:**
+- `https://status.[vendor].com` or `https://[vendor].statuspage.io` → incident history
+- Search: `[vendor] outage incident 2025 2026 site:twitter.com OR site:reddit.com`
+
+**Pricing (use India/region-specific URLs):**
+- `https://[vendor].com/pricing` (check for geo-redirect — try `/in/pricing` or `/pricing-india`)
+- Search: `[vendor] pricing MDR India 2025 2026 per transaction`
+- **DO THE MATH**: Calculate actual monthly cost at user's stated volume, then at 3x and 10x
+
+**Reviews & Sentiment:**
+- Search: `[vendor] G2 reviews rating 2025`
+- Search: `[vendor] review site:reddit.com`
+
+**Compliance:**
+- Search: `[vendor] PCI DSS SOC2 ISO 27001 certification`
+- Search: `[vendor] RBI payment aggregator license` (for India payment gateways)
+
+**Corporate Risk:**
+- Search: `[vendor] acquisition merger funding 2025 2026`
+- Search: `[vendor] layoffs restructuring 2025 2026`
+
+**Tech Risk:**
+- Search: `[vendor] API deprecation sunset changelog breaking changes`
+- Check GitHub issues for `deprecated` or `breaking` labels
+
+### Step 2: Follow the 4-phase process defined in SOUL.md exactly
+
+### Step 3: Output ALL 8 sections described in SOUL.md — never skip any
+
+### Step 4: Make BOLD weight adjustments
+- Minimum 5 percentage point shifts per discovery
+- At least 3 discoveries with real evidence chains
+- Show the cascade effect: how one discovery changes which vendor wins
+
+### Step 5: Check all 6 hidden risk categories for every vendor
+- Use GitHub API data for maintainer health (not just "repo exists")
+- Calculate pricing at 10x to find traps
+- Check news for acquisitions
 
 ## Quality Checklist (Self-Verify Before Responding)
 
@@ -36,12 +70,15 @@ Before sending your response, verify:
 - [ ] Context summary extracted correctly from query
 - [ ] 3-5 candidates identified with rationale for each
 - [ ] At least 3 discoveries shown with evidence → weight impact → triggered research
-- [ ] Weight table shows BOTH initial and final percentages
-- [ ] Comparison matrix has scores AND evidence in every cell
-- [ ] Hidden risks section covers all 6 categories
+- [ ] Each weight shift is ≥5 percentage points (not just 2-3%)
+- [ ] Weight table shows BOTH initial and final percentages that sum to 100%
+- [ ] Comparison matrix has scores AND evidence in every cell (minimize N/A — try 2+ sources before giving up)
+- [ ] Hidden risks section covers all 6 categories with specific evidence
+- [ ] Cost projection table included (at current scale, 3x, and 10x)
 - [ ] Recommendation has primary + backup + conditional alternatives
 - [ ] Reproducibility section lists data sources and date
-- [ ] Web search was used for real data (not guesses)
+- [ ] Web search was used for real data (not guesses) — GitHub API, status pages, pricing pages fetched
+- [ ] At least 8 web fetches were performed across all vendors
 
 ## Context-Awareness Requirement
 

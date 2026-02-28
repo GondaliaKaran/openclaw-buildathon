@@ -67,15 +67,9 @@
       "description": "Tech-stack specific evaluation"
     }
   ],
-  
-  "conversation_flow": {
-    "greeting": "I'm an adaptive vendor evaluation agent. I can help you find and compare vendors with intelligent, context-aware analysis.",
-    "clarification_prompts": [
-      "What category are you evaluating? (e.g., payment gateway, CRM, database)",
-      "What's your tech stack?",
-      "What's your domain/industry?",
-      "What are your top priorities?"
-    ],
-    "completion_message": "Evaluation complete! I've provided a detailed recommendation with reasoning."
+
+  "behavior": {
+    "mode": "immediate_evaluation",
+    "description": "Always respond with full structured evaluation. Never ask clarifying questions - make reasonable assumptions and state them."
   }
 }
