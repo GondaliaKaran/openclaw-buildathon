@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from orchestrator import EvaluationOrchestrator
 from config import config
+from utils.query_parser import QueryParser
 import json
 
 
@@ -25,12 +26,22 @@ async def run_evaluation(query: str):
     if not config.openai.api_key:
         raise ValueError("OPENAI_API_KEY not set in environment. Please check .env file.")
     
+    # Parse query into structured context
+    print("📝 Parsing query...\n")
+    parser = QueryParser()
+    context = await parser.parse_query(query)
+    
+    print(f"   Category: {context.get('category')}")
+    print(f"   Region: {context.get('region')}")
+    print(f"   Scale: {context.get('scale')}")
+    print(f"   Domain: {context.get('domain')}\n")
+    
     # Create orchestrator (uses config from environment)
     orchestrator = EvaluationOrchestrator()
     
     try:
-        # Run evaluation
-        result = await orchestrator.run_evaluation({"raw_query": query})
+        # Run evaluation with parsed context
+        result = await orchestrator.run_evaluation(context)
         
         # Format output
         print("\n" + "="*80)
