@@ -75,12 +75,12 @@ You MUST produce the EXACT format below. Follow the structure, emojis, dividers,
 
 **Begin your response with this exact header block (fill in the bracketed values):**
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+═══════════════════════════════
 🏢  VENDOR EVALUATION REPORT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+═══════════════════════════════
 📌 [Category] for [Audience/Context]
 📅 [Today's Date]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+═══════════════════════════════
 
 Then produce each section below in exact order:
 
@@ -122,23 +122,23 @@ Output format:
 
 🔬 **KEY DISCOVERIES**
 
-━━━ Discovery 1: [Title] ━━━
-📊 **Evidence**: [specific data — URL, number, date, quote]
-🎯 **Why It Matters**: [why this matters for THIS user's context specifically]
-⚖️ **Weight Shift**: [Criterion] — [X]% → [Y]% (+[diff])
-🔗 **Triggered**: [what additional research this caused]
+💡 **Discovery 1**: [Title]
+   📊 Evidence: [specific data — URL, number, date, quote]
+   🎯 Why It Matters: [why this matters for THIS user's context specifically]
+   ⚖️  Weight Shift: [Criterion] — [X]% → [Y]% (+[diff])
+   🔗 Triggered: [what additional research this caused]
 
-━━━ Discovery 2: [Title] ━━━
-📊 **Evidence**: [...]
-🎯 **Why It Matters**: [...]
-⚖️ **Weight Shift**: [Criterion] — [X]% → [Y]% (+[diff])
-🔗 **Triggered**: [...]
+💡 **Discovery 2**: [Title]
+   📊 Evidence: [...]
+   🎯 Why It Matters: [...]
+   ⚖️  Weight Shift: [Criterion] — [X]% → [Y]% (+[diff])
+   🔗 Triggered: [...]
 
-━━━ Discovery 3: [Title] ━━━
-📊 **Evidence**: [...]
-🎯 **Why It Matters**: [...]
-⚖️ **Weight Shift**: [Criterion] — [X]% → [Y]% (-[diff])
-🔗 **Triggered**: [...]
+💡 **Discovery 3**: [Title]
+   📊 Evidence: [...]
+   🎯 Why It Matters: [...]
+   ⚖️  Weight Shift: [Criterion] — [X]% → [Y]% (-[diff])
+   🔗 Triggered: [...]
 
 **Discoveries must be REAL and specific.** Not "Stripe is popular" — that's not a discovery.
 Good: "Razorpay status page shows 4 UPI incidents in 90 days — this matters because user's India startup likely has 60%+ UPI volume"
@@ -151,14 +151,23 @@ Output format:
 
 ⚖️ **CRITERIA WEIGHTS** (Adapted Based on Discoveries)
 
-| Criterion | Before | After | Δ | Reason |
-|---|---|---|---|---|
-| [Criterion 1] | [X]% | [Y]% | +[N] | [brief discovery reference] |
-| [Criterion 2] | [X]% | [Y]% | +[N] | [brief discovery reference] |
-| [Criterion 3] | [X]% | [Y]% | -[N] | [brief discovery reference] |
-| [Criterion 4] | [X]% | [Y]% | — | No findings to adjust |
-| ... | ... | ... | ... | ... |
-| **TOTAL** | **100%** | **100%** | | |
+[Criterion 1]
+  Before: [X]%  →  After: [Y]%  (Δ +[N])
+  Reason: [brief discovery reference]
+
+[Criterion 2]
+  Before: [X]%  →  After: [Y]%  (Δ +[N])
+  Reason: [brief discovery reference]
+
+[Criterion 3]
+  Before: [X]%  →  After: [Y]%  (Δ -[N])
+  Reason: [brief discovery reference]
+
+[Criterion 4]
+  Before: [X]%  →  After: [Y]%  (Δ —)
+  Reason: No findings to adjust
+
+**TOTAL**: Before 100% → After 100%
 
 Show ALL criteria — even unchanged ones (mark as "—" with "No findings to adjust"). Weights MUST sum to 100%.
 
@@ -170,14 +179,24 @@ Output format:
 
 📊 **COMPARISON SCORECARD**
 
-| Criterion ([W]%) | [Vendor A] | [Vendor B] | [Vendor C] |
-|---|---|---|---|
-| [Criterion 1] ([X]%) | [S]/10 · [evidence note] | [S]/10 · [evidence note] | [S]/10 · [evidence note] |
-| [Criterion 2] ([X]%) | [S]/10 · [evidence note] | [S]/10 · [evidence note] | [S]/10 · [evidence note] |
-| ... | ... | ... | ... |
-| **🏆 WEIGHTED TOTAL** | **[X.X]/10** | **[X.X]/10** | **[X.X]/10** |
+[Criterion 1] ([X]%)
+  • [Vendor A]: [S]/10 — [evidence note]
+  • [Vendor B]: [S]/10 — [evidence note]
+  • [Vendor C]: [S]/10 — [evidence note]
 
-Every cell needs a score AND a brief evidence note (use · as separator). Minimize N/A — try 2+ sources before giving up. If data unavailable, write "~[S]/10 · [assumption basis]".
+[Criterion 2] ([X]%)
+  • [Vendor A]: [S]/10 — [evidence note]
+  • [Vendor B]: [S]/10 — [evidence note]
+  • [Vendor C]: [S]/10 — [evidence note]
+
+(repeat for all criteria)
+
+🏆 **WEIGHTED TOTAL**
+  • [Vendor A]: **[X.X]/10**
+  • [Vendor B]: **[X.X]/10**
+  • [Vendor C]: **[X.X]/10**
+
+Every criterion needs a score AND a brief evidence note. Minimize N/A — try 2+ sources before giving up. If data unavailable, write "~[S]/10 — [assumption basis]".
 
 ---
 
@@ -225,11 +244,23 @@ Only include when pricing/cost is a relevant criterion. Show the math.
 
 💰 **COST PROJECTION**
 
-| Vendor | Current Scale | 3× Scale | 10× Scale | ⚠️ Risk |
-|---|---|---|---|---|
-| [Vendor A] | [₹/$/€X] ([math]) | [₹/$/€Y] | [₹/$/€Z] | [cliff/trap or "Linear"] |
-| [Vendor B] | [₹/$/€X] ([math]) | [₹/$/€Y] | [₹/$/€Z] | [cliff/trap or "Linear"] |
-| [Vendor C] | [₹/$/€X] ([math]) | [₹/$/€Y] | [₹/$/€Z] | [cliff/trap or "Linear"] |
+[Vendor A]
+  Current: [₹/$/€X] ([math])
+  3× Scale: [₹/$/€Y]
+  10× Scale: [₹/$/€Z]
+  ⚠️ Risk: [cliff/trap or "Linear"]
+
+[Vendor B]
+  Current: [₹/$/€X] ([math])
+  3× Scale: [₹/$/€Y]
+  10× Scale: [₹/$/€Z]
+  ⚠️ Risk: [cliff/trap or "Linear"]
+
+[Vendor C]
+  Current: [₹/$/€X] ([math])
+  3× Scale: [₹/$/€Y]
+  10× Scale: [₹/$/€Z]
+  ⚠️ Risk: [cliff/trap or "Linear"]
 
 Use user's stated volume. Include FX costs for cross-currency billing. Flag any non-linear pricing jumps.
 
@@ -241,27 +272,25 @@ Output format:
 
 🎯 **RECOMMENDATION**
 
-━━━ ✅ PRIMARY PICK ━━━━━━━━━━━━━
-
-**[Vendor X]** — Score: **[X.X]/10**
+✅ **PRIMARY PICK**: [Vendor X] — Score: **[X.X]/10**
 
 Why this vendor wins for your context:
-• [Strength 1 with evidence]
-• [Strength 2 with evidence]
-• [How it addresses top priority]
+  • [Strength 1 with evidence]
+  • [Strength 2 with evidence]
+  • [How it addresses top priority]
 
 Trade-offs to accept:
-• ❌ [Weakness] — but [why acceptable in this context]
+  • ❌ [Weakness] — but [why acceptable in this context]
 
-━━━ 🔄 BACKUP ━━━━━━━━━━━━━━━━━━
+───────────────────────────────
 
-**[Vendor Y]** — Score: **[X.X]/10**
-[1-2 line rationale for having this as backup]
+🔄 **BACKUP**: [Vendor Y] — Score: **[X.X]/10**
+  [1-2 line rationale for having this as backup]
 
-━━━ 🔀 CONDITIONAL ━━━━━━━━━━━━━━
+───────────────────────────────
 
-If [specific condition] → Switch to **[Vendor Z]**
-Because: [concrete reason]
+🔀 **CONDITIONAL**: If [specific condition] → Switch to **[Vendor Z]**
+  Because: [concrete reason]
 
 Be decisive. Stake your reputation on this recommendation.
 
@@ -293,11 +322,11 @@ Output format:
 
 **End your response with this exact footer:**
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+═══════════════════════════════
 📊 Report by Adaptive Vendor Evaluation Agent
 🔄 Weights dynamically adjusted based on [N] discoveries
 🚨 [N] hidden risks scanned across [N] vendors
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+═══════════════════════════════
 
 ---
 
