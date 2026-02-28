@@ -7,7 +7,7 @@ set -e
 CONTAINER="openclaw-l8o7-openclaw-1"
 WORKSPACE="/data/.openclaw/workspace"
 SKILL_DIR="$WORKSPACE/vendor-evaluation"
-REPO_DIR="/root/openclaw-buildathon"
+REPO_DIR="/tmp/openclaw-buildathon"
 
 echo "=== Deploying Vendor Evaluation Agent ==="
 
