@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Evaluation — OpenClaw</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .form-page {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 32px;
+        }
+        .back-link:hover { color: var(--text); }
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+        }
+        .form-card h1 {
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .form-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .templates {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .template-btn {
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .template-btn:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+        .template-btn .tpl-icon { font-size: 16px; margin-right: 6px; }
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            flex: 1;
+            justify-content: center;
+        }
+        .btn-primary:hover {
+            background: #7c6df7;
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status-msg {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            display: none;
+        }
+        .status-success { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); display: block; }
+        .status-error { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); display: block; }
+    </style>
+</head>
+<body>
+    <div class="form-page">
+        <a href="/" class="back-link">← Back to Dashboard</a>
+
+        <div class="form-card">
+            <h1>⚡ New Evaluation</h1>
+            <p>Describe what you're evaluating. Be specific about your context — industry, scale, region, and requirements.</p>
+
+            <form id="evalForm">
+                <div class="form-group">
+                    <label class="form-label">Evaluation Query</label>
+                    <textarea class="form-textarea" id="queryInput" placeholder="e.g., Evaluate payment gateways for an Indian SaaS startup processing 50,000 transactions/month with UPI support required" rows="4"></textarea>
+                    <div class="form-hint">The more context you provide, the better the evaluation will be.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Quick Templates</label>
+                    <div class="templates">
+                        <button type="button" class="template-btn" onclick="setTemplate(0)">
+                            <span class="tpl-icon">💳</span> Payment Gateways (India)
+                        </button>
+                        <button type="button" class="template-btn" onclick="setTemplate(1)">
+                            <span class="tpl-icon">☁️</span> Cloud Providers
+                        </button>
+                        <button type="button" class="template-btn" onclick="setTemplate(2)">
+                            <span class="tpl-icon">🔐</span> Auth Providers
+                        </button>
+                        <button type="button" class="template-btn" onclick="setTemplate(3)">
+                            <span class="tpl-icon">📊</span> Analytics Platforms
+                        </button>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="spinner" id="spinner"></span>
+                        <span id="btnText">Generate Evaluation Report</span>
+                    </button>
+                </div>
+
+                <div class="status-msg" id="statusMsg"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const templates = [
+            "Evaluate payment gateways for an Indian B2B SaaS startup processing 50,000 transactions/month. Need UPI, netbanking, international cards. Budget-conscious, developer team of 5.",
+            "Compare cloud providers (AWS, GCP, Azure) for a mid-stage startup running ML workloads. Currently spending $5000/month, team is Python-heavy, need GPU instances and managed Kubernetes.",
+            "Evaluate authentication providers for a healthcare SaaS platform. Need HIPAA compliance, MFA, SSO support, and user federation. 100K MAU expected within 12 months.",
+            "Compare analytics platforms for a D2C e-commerce brand. Need real-time dashboards, funnel analysis, cohort analysis. Non-technical marketing team as primary users. 500K monthly events."
+        ];
+
+        function setTemplate(idx) {
+            document.getElementById('queryInput').value = templates[idx];
+            document.getElementById('queryInput').focus();
+        }
+
+        document.getElementById('evalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) return;
+
+            const btn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('spinner');
+            const btnText = document.getElementById('btnText');
+            const status = document.getElementById('statusMsg');
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.textContent = 'Creating Report...';
+            status.className = 'status-msg';
+
+            try {
+                const res = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                const data = await res.json();
+                if (data.id) {
+                    status.className = 'status-msg status-success';
+                    status.innerHTML = 'Report created! <a href="/report/' + data.id + '" style="color:var(--green);font-weight:600;">View Report →</a>';
+                } else {
+                    throw new Error(data.error || 'Failed to create report');
+                }
+            } catch (err) {
+                status.className = 'status-msg status-error';
+                status.textContent = 'Error: ' + err.message;
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.textContent = 'Generate Evaluation Report';
+            }
+        });
+    </script>
+</body>
+</html>

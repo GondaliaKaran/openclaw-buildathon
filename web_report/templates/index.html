@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw — Vendor Evaluation Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Dashboard-specific styles */
+        .dashboard {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+        .dash-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .dash-header h1 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .dash-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        .dash-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #7c6df7;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+        }
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-card-hover);
+        }
+        .reports-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .report-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .report-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+        .report-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--accent-glow);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .report-info { flex: 1; min-width: 0; }
+        .report-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .report-meta-row {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .report-winner {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--green-bg);
+            color: var(--green);
+            border: 1px solid var(--green-border);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .report-arrow {
+            color: var(--text-dim);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            background: var(--bg-card);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-state h3 {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-num {
+            font-family: var(--mono);
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dash-header">
+            <div class="header-badge" style="margin-bottom:16px;">VENDOR EVALUATION</div>
+            <h1>Evaluation Reports</h1>
+            <p>Adaptive vendor & technology evaluation powered by OpenClaw</p>
+        </div>
+
+        {% if reports|length > 0 %}
+        <div class="stat-row">
+            <div class="stat-box">
+                <div class="stat-num">{{ reports|length }}</div>
+                <div class="stat-label">Reports</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num">{{ reports|map(attribute='candidates_count')|sum }}</div>
+                <div class="stat-label">Vendors Evaluated</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="dash-actions">
+            <a href="/new" class="btn btn-primary">⚡ New Evaluation</a>
+            <a href="/demo" class="btn btn-secondary">📊 View Demo Report</a>
+        </div>
+
+        {% if reports|length > 0 %}
+        <div class="reports-grid">
+            {% for r in reports %}
+            <a href="/report/{{ r.id }}" class="report-card">
+                <div class="report-icon">📊</div>
+                <div class="report-info">
+                    <div class="report-title">{{ r.query }}</div>
+                    <div class="report-meta-row">
+                        <span>{{ r.date }}</span>
+                        <span>•</span>
+                        <span>{{ r.candidates_count }} candidates</span>
+                    </div>
+                </div>
+                {% if r.winner %}
+                <div class="report-winner">🏆 {{ r.winner }}</div>
+                {% endif %}
+                <div class="report-arrow">→</div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <h3>No evaluations yet</h3>
+            <p>Create your first vendor evaluation or view the demo report to see it in action.</p>
+            <a href="/demo" class="btn btn-primary">📊 View Demo Report</a>
+        </div>
+        {% endif %}
+
+        <div class="report-footer" style="margin-top:48px;">
+            <div class="footer-line"></div>
+            <p>OpenClaw Vendor Evaluation Agent</p>
+            <p class="footer-powered">Built for OpenClaw Buildathon — Challenge #104</p>
+        </div>
+    </div>
+</body>
+</html>

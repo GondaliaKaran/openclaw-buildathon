@@ -79,13 +79,40 @@ echo ""
 
 # Step 5: Install dependencies if needed
 echo "Step 5: Installing Python dependencies..."
-docker exec $CONTAINER pip install --break-system-packages -q openai pydantic aiohttp tenacity python-dotenv 2>/dev/null || true
+docker exec $CONTAINER pip install --break-system-packages -q openai pydantic aiohttp tenacity python-dotenv flask 2>/dev/null || true
+
+# Step 6: Deploy web report dashboard
+echo ""
+echo "Step 6: Deploying web report dashboard..."
+WEB_DIR="$SKILL_DIR/web_report"
+docker exec $CONTAINER mkdir -p $WEB_DIR/templates $WEB_DIR/static $WEB_DIR/reports
+
+for f in app.py; do
+    docker cp "$REPO_DIR/web_report/$f" "$CONTAINER:$WEB_DIR/$f"
+done
+for f in $REPO_DIR/web_report/templates/*.html; do
+    docker cp "$f" "$CONTAINER:$WEB_DIR/templates/$(basename $f)"
+done
+for f in $REPO_DIR/web_report/static/*; do
+    docker cp "$f" "$CONTAINER:$WEB_DIR/static/$(basename $f)"
+done
+
+# Step 7: Start web dashboard (kill existing if running)
+echo ""
+echo "Step 7: Starting web dashboard on port 8080..."
+docker exec $CONTAINER bash -c "pkill -f 'python.*app.py' 2>/dev/null || true"
+docker exec -d $CONTAINER bash -c "cd $WEB_DIR && python app.py > /tmp/web_report.log 2>&1 &"
+sleep 2
+echo "Web dashboard status:"
+docker exec $CONTAINER bash -c "curl -s -o /dev/null -w 'HTTP %{http_code}' http://localhost:8080/ 2>/dev/null || echo 'Starting up...'"
 
 echo ""
 echo "=== Deployment Complete ==="
 echo ""
 echo "Verify SOUL.md is new version:"
 docker exec $CONTAINER head -3 $WORKSPACE/SOUL.md
+echo ""
+echo "Web Dashboard: http://187.77.190.61:8080"
 echo ""
 echo "Test: Send to Telegram bot:"
 echo '  "evaluate payment gateways for Indian startup with 10K transactions/month"'

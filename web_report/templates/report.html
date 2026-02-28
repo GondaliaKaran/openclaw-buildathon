@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report.get('recommendation', {}).get('primary', 'Vendor') }} — Evaluation Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Print / PDF button -->
+    <div class="no-print fab-container">
+        <button class="fab" onclick="window.print()" title="Export as PDF">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span>Export PDF</span>
+        </button>
+    </div>
+
+    <div class="report">
+        <!-- ═══════════ HEADER ═══════════ -->
+        <header class="report-header">
+            <div class="header-badge">VENDOR EVALUATION REPORT</div>
+            <h1>{{ report.get('query', 'Vendor Evaluation') }}</h1>
+            <div class="header-meta">
+                <span class="meta-chip">📅 {{ report.get('created_at', '')[:10] }}</span>
+                <span class="meta-chip">🏷️ {{ report.get('context', {}).get('domain', 'Technology') }}</span>
+                <span class="meta-chip">🌍 {{ report.get('context', {}).get('region', 'Global') }}</span>
+                {% if report.get('recommendation', {}).get('primary') %}
+                <span class="meta-chip winner">🏆 {{ report['recommendation']['primary'] }}</span>
+                {% endif %}
+            </div>
+        </header>
+
+        {% if report.get('status') == 'pending' %}
+        <!-- ═══════════ PENDING STATE ═══════════ -->
+        <section class="card pending-card">
+            <div class="section-icon">⏳</div>
+            <h2>Evaluation Pending</h2>
+            <p>Send this query to the Telegram or Slack bot to generate the full report:</p>
+            <code class="query-code">{{ report.get('query', '') }}</code>
+            <p class="hint">The report will appear here once the evaluation is complete.</p>
+        </section>
+
+        {% else %}
+        <!-- ═══════════ ① CONTEXT ═══════════ -->
+        {% if report.get('context') %}
+        <section class="card" id="context">
+            <div class="section-header">
+                <span class="section-number">①</span>
+                <h2>Context Snapshot</h2>
+            </div>
+            <div class="context-grid">
+                {% set ctx = report['context'] %}
+                <div class="ctx-item">
+                    <span class="ctx-label">Tech Stack</span>
+                    <span class="ctx-value">{{ ctx.get('tech_stack', 'Not specified') }}</span>
+                </div>
+                <div class="ctx-item">
+                    <span class="ctx-label">Domain</span>
+                    <span class="ctx-value">{{ ctx.get('domain', 'Not specified') }}</span>
+                </div>
+                <div class="ctx-item">
+                    <span class="ctx-label">Region</span>
+                    <span class="ctx-value">{{ ctx.get('region', 'Not specified') }}</span>
+                </div>
+                <div class="ctx-item">
+                    <span class="ctx-label">Scale</span>
+                    <span class="ctx-value">{{ ctx.get('scale', 'Not specified') }}</span>
+                </div>
+                <div class="ctx-item full-width">
+                    <span class="ctx-label">Stated Priorities</span>
+                    <span class="ctx-value">{{ ctx.get('stated_priorities', 'Not specified') }}</span>
+                </div>
+                <div class="ctx-item full-width">
+                    <span class="ctx-label">Inferred Priorities</span>
+                    <span class="ctx-value highlight">{{ ctx.get('inferred_priorities', 'Not specified') }}</span>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ② CANDIDATES ═══════════ -->
+        {% if report.get('candidates') %}
+        <section class="card" id="candidates">
+            <div class="section-header">
+                <span class="section-number">②</span>
+                <h2>Candidates Shortlisted</h2>
+            </div>
+            <div class="candidates-list">
+                {% for c in report['candidates'] %}
+                <div class="candidate-item">
+                    <span class="candidate-num">{{ loop.index }}</span>
+                    <div>
+                        <strong>{{ c.get('name', 'Unknown') }}</strong>
+                        <span class="candidate-rationale">{{ c.get('rationale', '') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ③ KEY DISCOVERIES ═══════════ -->
+        {% if report.get('discoveries') %}
+        <section class="card" id="discoveries">
+            <div class="section-header">
+                <span class="section-number">③</span>
+                <h2>Key Discoveries</h2>
+                <span class="section-badge adaptive">Adaptive Analysis</span>
+            </div>
+            {% for d in report['discoveries'] %}
+            <div class="discovery-card">
+                <div class="discovery-header">
+                    <span class="discovery-num">💡 Discovery {{ loop.index }}</span>
+                    <h3>{{ d.get('title', '') }}</h3>
+                </div>
+                <div class="discovery-body">
+                    <div class="discovery-row">
+                        <span class="disc-icon">📊</span>
+                        <div><strong>Evidence:</strong> {{ d.get('evidence', 'N/A') }}</div>
+                    </div>
+                    <div class="discovery-row">
+                        <span class="disc-icon">🎯</span>
+                        <div><strong>Why It Matters:</strong> {{ d.get('why_it_matters', 'N/A') }}</div>
+                    </div>
+                    <div class="discovery-row highlight-row">
+                        <span class="disc-icon">⚖️</span>
+                        <div><strong>Weight Shift:</strong> <span class="weight-shift">{{ d.get('weight_shift', 'N/A') }}</span></div>
+                    </div>
+                    <div class="discovery-row">
+                        <span class="disc-icon">🔗</span>
+                        <div><strong>Triggered:</strong> {{ d.get('triggered', 'N/A') }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ④ WEIGHTS ═══════════ -->
+        {% if report.get('weights') %}
+        <section class="card" id="weights">
+            <div class="section-header">
+                <span class="section-number">④</span>
+                <h2>Criteria Weights</h2>
+                <span class="section-badge">Before → After</span>
+            </div>
+            <div class="table-wrapper">
+                <table class="weights-table">
+                    <thead>
+                        <tr>
+                            <th>Criterion</th>
+                            <th>Before</th>
+                            <th>After</th>
+                            <th>Δ</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set w = report['weights'] %}
+                        {% for criterion in w.get('before', {}).keys() %}
+                        {% set before_val = w['before'][criterion] %}
+                        {% set after_val = w['after'].get(criterion, before_val) %}
+                        {% set delta = after_val - before_val %}
+                        <tr class="{{ 'row-up' if delta > 0 else ('row-down' if delta < 0 else '') }}">
+                            <td class="criterion-name">{{ criterion }}</td>
+                            <td>{{ before_val }}%</td>
+                            <td><strong>{{ after_val }}%</strong></td>
+                            <td class="{{ 'delta-up' if delta > 0 else ('delta-down' if delta < 0 else 'delta-zero') }}">
+                                {{ ('+' ~ delta) if delta > 0 else (delta if delta != 0 else '—') }}
+                            </td>
+                            <td class="reason-cell">{{ w.get('reasons', {}).get(criterion, '—') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>TOTAL</strong></td>
+                            <td><strong>100%</strong></td>
+                            <td><strong>100%</strong></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- Weight visualization bars -->
+            <div class="weight-bars">
+                {% for criterion in w.get('after', {}).keys() %}
+                <div class="weight-bar-row">
+                    <span class="bar-label">{{ criterion }}</span>
+                    <div class="bar-track">
+                        <div class="bar-before" style="width: {{ w['before'].get(criterion, 0) }}%"></div>
+                        <div class="bar-after" style="width: {{ w['after'].get(criterion, 0) }}%"></div>
+                    </div>
+                    <span class="bar-value">{{ w['after'].get(criterion, 0) }}%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ⑤ COMPARISON SCORECARD ═══════════ -->
+        {% if report.get('scorecard') %}
+        <section class="card" id="scorecard">
+            <div class="section-header">
+                <span class="section-number">⑤</span>
+                <h2>Comparison Scorecard</h2>
+            </div>
+            {% set sc = report['scorecard'] %}
+            <div class="table-wrapper">
+                <table class="scorecard-table">
+                    <thead>
+                        <tr>
+                            <th>Criterion</th>
+                            {% for vendor_name in sc.get('vendors', {}).keys() %}
+                            <th>{{ vendor_name }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(sc.get('criteria', [])|length) %}
+                        <tr>
+                            <td class="criterion-name">{{ sc['criteria'][i] }}</td>
+                            {% for vendor_name, vendor_data in sc.get('vendors', {}).items() %}
+                            {% set score = vendor_data['scores'][i] %}
+                            <td>
+                                <div class="score-cell">
+                                    <span class="score-badge {{ 'score-high' if score >= 7 else ('score-mid' if score >= 5 else 'score-low') }}">{{ score }}/10</span>
+                                    <span class="score-note">{{ vendor_data['notes'][i] }}</span>
+                                </div>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td><strong>🏆 WEIGHTED TOTAL</strong></td>
+                            {% for vendor_name, vendor_data in sc.get('vendors', {}).items() %}
+                            <td>
+                                <span class="total-score">{{ vendor_data.get('weighted_total', 0) }}/10</span>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- Score comparison chart -->
+            <div class="score-chart">
+                {% set max_score = 10 %}
+                {% for vendor_name, vendor_data in sc.get('vendors', {}).items() %}
+                {% set pct = (vendor_data.get('weighted_total', 0) / max_score * 100)|int %}
+                <div class="chart-bar-row">
+                    <span class="chart-label">{{ vendor_name }}</span>
+                    <div class="chart-track">
+                        <div class="chart-fill {{ 'chart-winner' if vendor_name == report.get('recommendation', {}).get('primary', '') else '' }}" style="width: {{ pct }}%">
+                            <span class="chart-value">{{ vendor_data.get('weighted_total', 0) }}/10</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ⑥ HIDDEN RISKS ═══════════ -->
+        {% if report.get('hidden_risks') %}
+        <section class="card" id="risks">
+            <div class="section-header">
+                <span class="section-number">⑥</span>
+                <h2>Hidden Risks Scan</h2>
+                <span class="section-badge risk-badge">Bonus Analysis</span>
+            </div>
+            {% set hr = report['hidden_risks'] %}
+            {% set risk_categories = [
+                ('maintainer_health', '🔧', 'Maintainer / Team Health'),
+                ('pricing_traps', '💰', 'Pricing Traps'),
+                ('vendor_lockin', '🔒', 'Vendor Lock-in'),
+                ('acquisition_risk', '🏢', 'Acquisition Risk'),
+                ('compliance_drift', '📋', 'Compliance Drift'),
+                ('tech_deprecation', '🛠️', 'Tech Deprecation')
+            ] %}
+            <div class="risks-grid">
+                {% for key, icon, label in risk_categories %}
+                <div class="risk-category">
+                    <h3>{{ icon }} {{ label }}</h3>
+                    {% for item in hr.get(key, []) %}
+                    <div class="risk-item risk-{{ item.get('status', 'info') }}">
+                        <span class="risk-vendor">{{ item.get('vendor', 'Unknown') }}</span>
+                        <span class="risk-status-icon">
+                            {% if item.get('status') == 'ok' %}✅{% elif item.get('status') == 'warning' %}⚠️{% elif item.get('status') == 'check' %}🔍{% else %}ℹ️{% endif %}
+                        </span>
+                        <p>{{ item.get('detail', 'No data') }}</p>
+                    </div>
+                    {% endfor %}
+                    {% if not hr.get(key) %}
+                    <div class="risk-item risk-ok">
+                        <span class="risk-status-icon">✅</span>
+                        <p>No issues detected</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ⑦ COST PROJECTION ═══════════ -->
+        {% if report.get('cost_projection') %}
+        <section class="card" id="costs">
+            <div class="section-header">
+                <span class="section-number">⑦</span>
+                <h2>Cost Projection</h2>
+            </div>
+            {% set cp = report['cost_projection'] %}
+            <div class="table-wrapper">
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>Vendor</th>
+                            {% for label in cp.get('scale_labels', []) %}
+                            <th>{{ label }}</th>
+                            {% endfor %}
+                            <th>⚠️ Risk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vendor_name, data in cp.get('vendors', {}).items() %}
+                        <tr>
+                            <td><strong>{{ vendor_name }}</strong></td>
+                            {% for cost in data.get('costs', []) %}
+                            <td class="cost-cell">{{ cost }}</td>
+                            {% endfor %}
+                            <td class="risk-note">{{ data.get('risk', '—') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ⑧ RECOMMENDATION ═══════════ -->
+        {% if report.get('recommendation') %}
+        <section class="card recommendation-card" id="recommendation">
+            <div class="section-header">
+                <span class="section-number">⑧</span>
+                <h2>Recommendation</h2>
+            </div>
+            {% set rec = report['recommendation'] %}
+
+            <!-- Primary -->
+            <div class="rec-primary">
+                <div class="rec-badge">✅ PRIMARY PICK</div>
+                <div class="rec-vendor-row">
+                    <h3>{{ rec.get('primary', 'N/A') }}</h3>
+                    <span class="rec-score">{{ rec.get('primary_score', 'N/A') }}/10</span>
+                </div>
+                <div class="rec-reasons">
+                    <p><strong>Why this vendor wins:</strong></p>
+                    <ul>
+                        {% for reason in rec.get('primary_reasons', []) %}
+                        <li>{{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% if rec.get('primary_tradeoffs') %}
+                <div class="rec-tradeoffs">
+                    <p><strong>Trade-offs to accept:</strong></p>
+                    <ul>
+                        {% for t in rec.get('primary_tradeoffs', []) %}
+                        <li>❌ {{ t }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Backup -->
+            {% if rec.get('backup') %}
+            <div class="rec-backup">
+                <div class="rec-badge backup-badge">🔄 BACKUP</div>
+                <div class="rec-vendor-row">
+                    <h3>{{ rec.get('backup', 'N/A') }}</h3>
+                    <span class="rec-score backup-score">{{ rec.get('backup_score', 'N/A') }}/10</span>
+                </div>
+                <p>{{ rec.get('backup_reason', '') }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Conditional -->
+            {% if rec.get('conditional') %}
+            <div class="rec-conditional">
+                <div class="rec-badge conditional-badge">🔀 CONDITIONAL</div>
+                <p><strong>{{ rec.get('conditional', '') }}</strong></p>
+                <p class="conditional-reason">{{ rec.get('conditional_reason', '') }}</p>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- ═══════════ ⑨ REPRODUCIBILITY ═══════════ -->
+        {% if report.get('reproducibility') %}
+        <section class="card" id="reproducibility">
+            <div class="section-header">
+                <span class="section-number">⑨</span>
+                <h2>Reproducibility</h2>
+            </div>
+            {% set rep = report['reproducibility'] %}
+            <div class="repro-meta">
+                <span class="meta-chip">📅 {{ rep.get('date', 'Unknown') }}</span>
+                <span class="meta-chip">🔗 {{ rep.get('sources_count', 0) }} sources checked</span>
+                <span class="meta-chip">🏢 {{ rep.get('vendors_count', 0) }} vendors</span>
+            </div>
+            <div class="repro-columns">
+                <div>
+                    <h4>📎 Key Sources</h4>
+                    <ul class="source-list">
+                        {% for src in rep.get('sources', []) %}
+                        <li>{{ src }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div>
+                    <h4>⚠️ Unable to Verify</h4>
+                    <ul class="unverified-list">
+                        {% for item in rep.get('unable_to_verify', []) %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="refresh-steps">
+                <h4>🔄 To Refresh This Evaluation</h4>
+                <ol>
+                    <li>Re-check vendor status pages for new incidents</li>
+                    <li>Verify pricing hasn't changed at projected scale</li>
+                    <li>Review GitHub activity in last 90 days</li>
+                    <li>Confirm compliance certifications are current</li>
+                </ol>
+            </div>
+        </section>
+        {% endif %}
+
+        {% endif %} {# end status check #}
+
+        <!-- ═══════════ FOOTER ═══════════ -->
+        <footer class="report-footer">
+            <div class="footer-line"></div>
+            <p>📊 Report by <strong>Adaptive Vendor Evaluation Agent</strong></p>
+            {% if report.get('discoveries') %}
+            <p>🔄 Weights dynamically adjusted based on {{ report['discoveries']|length }} discoveries</p>
+            {% endif %}
+            {% if report.get('hidden_risks') %}
+            {% set total_risks = [] %}
+            {% for cat in report['hidden_risks'].values() %}
+                {% for _ in cat %}
+                    {% if total_risks.append(1) %}{% endif %}
+                {% endfor %}
+            {% endfor %}
+            <p>🚨 {{ total_risks|length }} hidden risk checks across {{ report.get('candidates', [])|length }} vendors</p>
+            {% endif %}
+            <p class="footer-powered">Powered by OpenClaw · Challenge #104</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
