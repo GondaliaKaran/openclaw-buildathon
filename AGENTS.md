@@ -21,22 +21,34 @@ Examples:
 
 ## ⚠️ CRITICAL: How to Execute Evaluation
 
-**When a user makes a vendor evaluation request, you MUST immediately run the evaluation command. DO NOT ask clarifying questions first.**
+**When a user makes a vendor evaluation request, you MUST immediately run the evaluation command. DO NOT ask clarifying questions first. DO NOT provide a conversational answer.**
 
 ### Step 1: Identify Evaluation Request
-If the user's message contains evaluation keywords (evaluate, compare, recommend, find, choose) + vendor category → proceed to Step 2
+If the user's message contains evaluation keywords (evaluate, compare, recommend, find, choose) + vendor category → **IMMEDIATELY proceed to Step 2**
 
-### Step 2: Run Evaluation Immediately
-Execute this command:
+### Step 2: Run Evaluation Immediately (DO NOT SKIP THIS)
+
+**YOU MUST RUN THIS COMMAND IMMEDIATELY:**
+
 ```bash
 cd /data/.openclaw/workspace/vendor-evaluation && python3 run_evaluation.py --query "USER_EXACT_QUERY_HERE"
 ```
 
-Replace `USER_EXACT_QUERY_HERE` with the user's exact message.
+**DO NOT:**
+- ❌ Ask clarifying questions
+- ❌ Provide a conversational response
+- ❌ Explain what you're going to do
+- ❌ Request more information
+
+**DO:**
+- ✅ Run the command immediately with the user's exact query
+- ✅ Wait for the 3-4 minute evaluation to complete
+- ✅ Present the structured results
 
 **Example:**
 User says: "evaluate payment gateways for startup expecting 1M transactions/month"
-You run:
+
+You IMMEDIATELY run:
 ```bash
 cd /data/.openclaw/workspace/vendor-evaluation && python3 run_evaluation.py --query "evaluate payment gateways for startup expecting 1M transactions/month"
 ```

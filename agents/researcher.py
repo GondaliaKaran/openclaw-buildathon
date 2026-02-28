@@ -6,7 +6,7 @@ Performs deep investigation across multiple dimensions:
 - Technical: SDK quality, API, integration complexity, performance
 - Operational: Uptime, support, scalability
 - Business: Pricing, vendor health, compliance
-- Hidden Risks: Maintainer health, pricing traps, lock-in
+- Hidden Risks: Maintainer health, pricing traps, lock-in, acquisition, compliance, deprecation
 """
 
 import logging
@@ -15,6 +15,7 @@ from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 from agents.candidate_identifier import Candidate
+from agents.advanced_risk_detector import AdvancedRiskDetector
 from config import config
 
 logger = logging.getLogger(__name__)
@@ -64,6 +65,9 @@ class MultiCriteriaResearcher:
         self.openai = openai_client
         self.research_depth = config.agent.research_depth
         self.enable_hidden_risk_detection = config.agent.enable_hidden_risk_detection
+        
+        # Initialize advanced risk detector for bonus challenge
+        self.risk_detector = AdvancedRiskDetector(clawhub_client, openai_client)
     
     async def research_candidates(
         self,
@@ -219,26 +223,72 @@ class MultiCriteriaResearcher:
     async def _detect_hidden_risks(
         self,
         candidate: Candidate,
-        context: Dict[str, any],
-        findings: ResearchFindings
-    ):
-        """Detect hidden risks: maintainer churn, pricing traps, lock-in."""
+        con
+        Detect hidden risks using both basic and advanced detection.
+        
+        Detects 8 types of hidden risks for bonus challenge:
+        1. GitHub maintainer health (commit patterns, bus factor)
+        2. Pricing explosions at scale
+        3. Vendor lock-in risks
+        4. Recent acquisitions/mergers
+        5. Compliance drift/expiry
+        6. Technology deprecation
+        7. Community health decline
+        8. Support degradation
+        """
         vendor_name = candidate.name
         risks = []
         
-        # Maintainer Health Risk
+        # Run all risk detection in parallel for speed
+        risk_tasks = []
+        
+        # 1. GitHub Maintainer Risk (Advanced)
         if candidate.github_url:
-            maintainer_risk = await self._detect_maintainer_risk(candidate.github_url)
-            if maintainer_risk:
-                risks.append(maintainer_risk)
+            risk_tasks.append(
+                self.risk_detector.detect_github_maintainer_risks(candidate.github_url)
+            )
         
-        # Pricing Trap Risk
-        pricing_risk = await self._detect_pricing_traps(vendor_name, findings.pricing)
-        if pricing_risk:
-            risks.append(pricing_risk)
+        # 2. Pricing Explosion Risk (Advanced)
+        risk_tasks.append(
+            self.risk_detector.detect_scaling_pricing_risks(vendor_name, context)
+        )
         
-        # Lock-in Risk
-        lockin_risk = await self._detect_lockin_risk(vendor_name)
+        # 3. Acquisition Risk (Advanced)
+        risk_tasks.append(
+            self.risk_detector.detect_acquisition_risks(vendor_name)
+        )
+        
+        # 4. Compliance Drift Risk (Advanced)
+        compliance_reqs = context.get('compliance', [])
+        if compliance_reqs:
+            risk_tasks.append(
+                self.risk_detector.detect_compliance_drift_risks(vendor_name, compliance_reqs)
+            )
+        
+        # 5. Technology Deprecation Risk (Advanced)
+        tech_stack = context.get('tech_stack', [])
+        risk_tasks.append(
+            self.risk_detector.detect_technology_deprecation_risks(vendor_name, tech_stack)
+        )
+        
+        # 6. Basic Lock-in Risk (fallback)
+        risk_tasks.append(
+            self._detect_lockin_risk(vendor_name)
+        )
+        
+        # Execute all risk detections in parallel
+        risk_results = await asyncio.gather(*risk_tasks, return_exceptions=True)
+        
+        # Flatten results and filter out exceptions/None
+        for result in risk_results:
+            if isinstance(result, list):
+                risks.extend(result)
+            elif isinstance(result, dict) and result:
+                risks.append(result)
+            elif isinstance(result, Exception):
+                logger.warning(f"Risk detection failed: {result}")
+        
+        logger.info(f"Detected {len(risks)} hidden risks for {vendor_name}")lockin_risk = await self._detect_lockin_risk(vendor_name)
         if lockin_risk:
             risks.append(lockin_risk)
         
